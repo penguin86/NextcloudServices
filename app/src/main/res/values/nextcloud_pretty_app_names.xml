@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="updatenotification">Update notifications</string>
+
+    <string name="spreed">Nextcloud talk</string>
+    <string name="passman">Passman</string>
+    <string name="news">Nextcloud News</string>
+    <string name="files_sharing">Nextcloud</string>
+</resources>

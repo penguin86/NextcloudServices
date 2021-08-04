@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Nextcloud App name is preceded by pn_ -->
+    <string name="pn_spreed">com.nextcloud.talk2</string>
+    <string name="pn_passman">es.wolfi.app.passman</string>
+    <string name="pn_news">de.luhmer.owncloudnewsreader</string>
+    <string name="pn_files_sharing">com.nextcloud.client</string>
+</resources>

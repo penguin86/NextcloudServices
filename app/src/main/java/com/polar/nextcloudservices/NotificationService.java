@@ -3,6 +3,7 @@ package com.polar.nextcloudservices;
 
 import android.app.*;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -168,28 +169,41 @@ public class  NotificationService extends Service {
         }
     }
 
-    private void notificationSend(int id, String title, String text, String app, String app_name) {
+    /**
+     * Sends a notification
+     * @param id
+     * @param title
+     * @param text
+     * @param app
+     * @param app_name
+     * @param link
+     */
+    private void notificationSend(int id, String title, String text, String app, String app_name, String link) {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(app, app, NotificationManager.IMPORTANCE_HIGH);
             mNotificationManager.createNotificationChannel(channel);
         }
+        Intent i = this.getNotificationIntent(app_name, link);
+        PendingIntent pi = PendingIntent.getActivity(
+                this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
         Notification notification = new NotificationCompat.Builder(getBaseContext(), app)
                 .setSmallIcon(iconByApp(app_name))
                 .setContentTitle(title)
                 .setAutoCancel(true)
                 .setContentText(text)
+                .setContentIntent(pi)
                 .build();
         mNotificationManager.notify(id, notification);
     }
 
-    public static String prettifyChannelName(String Name) {
-        if (Name.equals("updatenotification")) {
-            return "Update notifications";
-        }
-        if (Name.equals("spreed")) {
-            return "Nextcloud talk";
-        }
+    public String prettifyChannelName(String Name) {
+        int id = getResources().getIdentifier(Name, "string", getPackageName());
+        if (id != 0)
+            return getString(id);
+
         String[] parts = Name.split("_");
         StringBuilder nice_name = new StringBuilder();
         for (String part : parts) {
@@ -217,7 +231,8 @@ public class  NotificationService extends Service {
                         notificationSend(notification_id, notification.getString("subject"),
                                 notification.getString("message"),
                                 prettifyChannelName(notification.getString("app")),
-                                notification.getString("app"));
+                                notification.getString("app"),
+                                notification.getString("link"));
                     }
                 }
                 NotificationManager mNotificationManager =
@@ -319,7 +334,40 @@ public class  NotificationService extends Service {
             SimpleDateFormat sdf = new SimpleDateFormat("[yyyy/MM/dd - HH:mm:ss]");
             return sdf.format(new Date());
         }
+    }
 
+    /**
+     * Builds an intent to start the relevant activity or, if not present, the browser
+     * @param app name as provided by Nextcloud
+     * @param link to the action relevant to the notification
+     * @return Intent
+     */
+    private Intent getNotificationIntent(String app, String link) {
+        PackageManager pm = getApplicationContext().getPackageManager();
+        String packageName = this.packageNameFromAppName(app);
+        Intent i = pm.getLaunchIntentForPackage(packageName);
+        if (i == null) {
+            // Application not found
+            i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(link));
+        }
+        return i;
+    }
 
+    /**
+     * Returns the android app package name, given the Nextcloud app name
+     * i.e.: called passing "spreed", returns "com.nextcloud.talk2"
+     * The mapping is in res/nextcloud_package_names.xml
+     * @param appName as provided by Nextcloud
+     * @return packageName for the corresponding Android app
+     */
+    private String packageNameFromAppName(String appName) {
+        // Search in res/nextcloud_package_names.xml
+        int id = getResources().getIdentifier("pn_" + appName, "string", getPackageName());
+        if (id != 0)
+            return getString(id);
+
+        // Try to build the app name (for future official nextcloud apps)
+        return "com.nextcloud." + appName.replace('_', '.');
     }
 }
