@@ -1,0 +1,5 @@
+- Fixed back arrow in main activity
+- Fixed nextcloud installations which are running under subdirectories(thanks @penguin86)
+- Added possibilty to use insecure connection
+- Added possibiliy to set polling interval
+- Tapping a notification opens the corresponding app or webpage
