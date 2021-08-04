@@ -7,6 +7,8 @@ import java.util.TimerTask;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
