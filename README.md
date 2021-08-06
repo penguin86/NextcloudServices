@@ -18,6 +18,11 @@ Currently login available only by putting credentials into app. So to login into
 
 **IMPORTANT:** Do **NOT** ommit first two steps - this may be risky for your security
 
+### On Android 8+
+Recent Android versions optimize the battery usage controlling how apps runs in background. To avoid receiving delayed notifications, please disable battery optimisation in:
+System settings -> Apps & Notifications -> Show all apps -> Nextcloud Services -> Advanced -> Battery -> Battery optimisation -> Set the app as *Not optimised*
+It is possible to limit battery usage setting a slower polling frequency in app settings.
+
 ## Building 
 You can build this app using android studio
 
